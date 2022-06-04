@@ -1,6 +1,6 @@
 const mongoose = require('mongoose'); 
 const joi = require('joi'); 
-const passwordComplexity = require('password-complexity'); 
+const passwordComplexity = require('joi-password-complexity');
 
 const ProductSchema = new mongoose.Schema({ 
     title: {type: String, required: true,unique: true},

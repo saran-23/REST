@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 //----------------------------------
 const userRouter = require('./routes/user');
+const authRouter = require('./routes/auth');
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ mongoose.connect(process.env.MONGO_URL)
     // });
 
     app.use('/api/users', userRouter); //api.use is used to register a middleware function to a given path.(get,post,put,delete)
+    app.use('/api/auth', authRouter);
 
 
 //listen to port

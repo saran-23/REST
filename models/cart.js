@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const joi = require('joi');
-const passwordComplexity = require('password-complexity');
+const passwordComplexity = require('joi-password-complexity');
 
 const CartSchema = new mongoose.schema({
     userId: {type: String, required: true},
