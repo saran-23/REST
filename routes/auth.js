@@ -1,30 +1,65 @@
-const router = require('express').Router(); 
-const user = require('../models/user'); // importing the userSchema from the user.js file
-const CryptoJS = require('crypto-js'); //  used to encrypt password it uses chiper block chaining mode and AES
-router.post("/register", async (req, res) => { // holding the response by using async await
-    const newUser = new user({
-        username: req.body.username,
-        email: req.body.email,
-        password: CryptoJS.AES.encrypt(req.body.password,process.env.PASS_KEY), //toString is used to convert the encrypted data into string
-    });
+const router = require("express").Router();
+const User = require("../models/User");
+const CryptoJS = require("crypto-js");
+const jwt = require("jsonwebtoken");
 
-    try {
-    // saving the data(user-name, email, password) to the database
-     const savedUser = await newUser.save(); //await is used to wait for the data to be saved
-    // console.log(savedUser);
-    res.status(201).json(savedUser); 
-    }
-    catch (err) {
-        // console.log(err.message);
-        res.status(500).json(err.message);   
-    }
+//REGISTER
+router.post("/register", async (req, res) => {
+  const newUser = new User({
+    username: req.body.username,
+    email: req.body.email,
+    password: CryptoJS.AES.encrypt(
+      req.body.password,
+      process.env.PASS_SEC
+    ).toString(),
+  });
 
-
+  try {
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
+//LOGIN
 
+router.post('/login', async (req, res) => {
+    try{
+        const user = await User.findOne(
+            {
+                username: req.body.username
+            }
+            
+        );
 
+        !user && res.status(401).json("Wrong User Name");
 
+        const hashedPassword = CryptoJS.AES.decrypt(
+            user.password,
+            process.env.PASS_SEC
+        ); 
+          const accessToken = jwt.sign( 
+          {
+            id : user._id,
+            isAdmin: user.isAdmin
+          }, 
+          process.env.JWT_SEC,
+          {expiresIn: '13d'},
+           
+          );
+        const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8); // here we are decrypting the password
+          originalPassword !== req.body.password && res.status(401).json("Wrong Password");
+        const {password, ...others} = user._doc; // here we are extracting the password from the user object
+          res.status(200).json({...others,accessToken}); 
+        // const inputPassword = req.body.password;
+        
+        
+    }catch(err){
+        res.status(500).json(err);
+        return;
+    }
 
+});
 
 module.exports = router;

@@ -3,7 +3,7 @@ const joi = require('joi');
 const passwordComplexity = require('joi-password-complexity');
 
 const OrderSchema = new mongoose.Schema({
-    userid: {type: String, required: true},
+    userId: {type: String, required: true},
     products: [
         {
             productId: {

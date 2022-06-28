@@ -4,18 +4,20 @@ const passwordComplexity = require('joi-password-complexity');
 
 
 // userschema to describe the structure of the user
-const UserSchema = new mongoose.Schema(  
+const UserSchema = new mongoose.Schema(
     {
-        username: {type: String, required: true, unique: true},
-        email : {type: String, required: true, unique: true},
-        password: {type: String, required: true},
-        isAdmin: { 
+        username: { type: String, required: true, unique: true },
+        email: { type: String, required: true, unique: true },
+        password: { type: String, required: true },
+        isAdmin: {
             type: Boolean,
-            default: false, 
+            default: false,
         },
     },
-        { timestamps: true } //
-    );
+    { timestamps: true } //
+);
+
+
 
 
 module.exports = mongoose.model('User', UserSchema); 
